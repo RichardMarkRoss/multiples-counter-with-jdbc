@@ -12,9 +12,11 @@ How can we:
 
 ## Setup
 
-To setup a local database run:
+To run this locally run:
 
 ```
 mvn flyway:migrate
+mvn package
+java -cp target/counter-with-jdbc-1.0-SNAPSHOT.jar co.projectcodex.counter.CounterRunner
 ```
 

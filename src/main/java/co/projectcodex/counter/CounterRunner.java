@@ -19,8 +19,10 @@ public class CounterRunner {
             if (commandString.equals("exit")){
                 exitNow = true;
                 System.out.println("Bye!");
+                return;
             }
 
+            //todo - add a better way of processing commands
             String[] commandParts = commandString.split(" ");
             String command = commandParts[0];
 
