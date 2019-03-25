@@ -1,40 +1,36 @@
 package co.projectcodex.counter;
 
-import co.projectcodex.counter.multiples.TheMultiplesCounter;
-
+import co.projectcodex.counter.multiples.JdbcMultiplesCounter;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Scanner;
+
 
 public class CounterRunner {
     public static void main(String[] args) {
 
-        MultiplesCounter multiplesCounter = new TheMultiplesCounter(7);
+        try {
+            Class.forName("org.h2.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:h2:file:./target/multiples_counter_test", "sa", "");
 
-        Scanner commandLineScanner =  new Scanner(System.in);
+            MultiplesCounter multiplesCounter = new JdbcMultiplesCounter(7, conn);
+            CommandProcessor commandProcessor = new CommandProcessor(multiplesCounter);
 
-        boolean exitNow = false;
-
-        while(!exitNow) {
-            System.out.print("Please enter your command:");
-            String commandString = commandLineScanner.nextLine();
-            if (commandString.equals("exit")){
-                exitNow = true;
-                System.out.println("Bye!");
-                return;
+            Scanner commandLineScanner =  new Scanner(System.in);
+            boolean exitNow = false;
+            while(!exitNow) {
+                System.out.print("Please enter your command:");
+                String commandString = commandLineScanner.nextLine();
+                if (commandString.equals("exit")){
+                    exitNow = true;
+                    System.out.println("Bye!");
+                    return;
+                }
+                String result = commandProcessor.process(commandString);
+                System.out.println(result);
             }
-
-            //todo - add a better way of processing commands
-            String[] commandParts = commandString.split(" ");
-            String command = commandParts[0];
-
-            if (command.equals("up")) {
-                multiplesCounter.count();
-            } else if(command.equals("show")) {
-                System.out.println(String.format("Current value: %d", multiplesCounter.value()));
-            } else {
-                System.out.println("Invalid command!");
-            }
-
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
